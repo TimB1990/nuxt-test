@@ -1,50 +1,71 @@
 <template>
-
-    <!-- slide show container -->
-    <div class="slideshow-container">
-
-        <!-- Full-width images with number and caption text -->
-        <div class="mySlides fade">
-            <div class="numbertext">1 / 4</div>
-            <img src="~/assets/images/img_lights_wide.jpg" style="width:100%">
-            <div class="text">Caption One</div>
-        </div>
-                <div class="mySlides fade">
-            <div class="numbertext">2 / 4</div>
-            <img src="~/assets/images/img_mountains_wide.jpg" style="width:100%">
-            <div class="text">Caption Two</div>
-        </div>
-                <div class="mySlides fade">
-            <div class="numbertext">3 / 4</div>
-            <img src="~/assets/images/img_nature_wide.jpg" alt="">
-            <div class="text">Caption Three</div>
-        </div>
-                <div class="mySlides fade">
-            <div class="numbertext">4 / 4</div>
-            <img src="~/assets/images/img_snow_wide.jpg" alt="">
-            <div class="text">Caption Four</div>
-        </div>
-
-        <!-- The dots/circles -->
-        <div style="text-align:center">
-            <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
-        </div>
-
+    <div>
+        <p>
+            <a @click="prev">Previous</a> || <a @click="next">Next</a>
+        </p>
+        <transition-group name='fade' tag='div'>
+            <div v-for="number in [currentNumber]" :key="number">
+                <img :src="images[Math.abs(currentNumber) % images.length]" @mouseover="stopSlider" @mouseout="startSlider">
+            </div>
+        </transition-group>     
     </div>
 </template>
 
 <script>
 export default {
-    name: 'siteHeader'
+    name: 'siteHeader',
+    data(){
+        return {
+            images: [
+                "/images/img_lights_wide.jpg",
+                "/images/img_mountains_wide.jpg",
+                "/images/img_nature_wide.jpg",
+                "/images/img_snow_wide.jpg"
+            ],
+            currentNumber: 0,
+            timer: null
+        }
+    },
+
+    mounted(){
+        this.startSlider()
+    },
+
+    methods: {
+        startSlider(){
+            this.timer = setInterval(this.next, 3000);
+        },
+
+        stopSlider(){
+            clearTimeout(this.timer)
+            this.timer = null
+        },
+
+        next(){
+            this.currentNumber += 1
+            console.log(this.currentNumber)
+        },
+        prev(){
+            this.currentNumber -= 1;
+            console.log(this.currentNumber)
+        }
+    }
 }
 </script>
 
 <style lang="scss">
 
-    .slideshow-container{
-        border: 1px solid $green;
-    }
+.fade-enter-active, .fade-leave-active {
+ transition: all 0.8s ease;
+ overflow: hidden;
+ visibility: visible;
+ opacity: 1;
+ position: absolute;
+}
+.fade-enter, .fade-leave-to {
+ opacity: 0;
+ visibility: hidden;
+}
+
 
 </style>
